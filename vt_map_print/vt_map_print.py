@@ -3,15 +3,18 @@ import shutil
 import glob, os
 import numpy as np
 from PIL import Image
-from globalMapTiles3 import GlobalMercator
-gmt = GlobalMercator()
+
+from vt_map_print.third_party import globalMapTiles3
+from vt_map_print import config
+
+gmt = globalMapTiles3.GlobalMercator()
 
 def save_tile(zoom, x, y):
     pixels = 256
     retina = '@2x'
-    styleId = "cj49edx972r632rp904oj4acj"
-    apiToken = "pk.eyJ1IjoibmF0ZXZhdHQiLCJhIjoiR1hVR1ZIdyJ9.gFwSyghJZIERfjLkzgTx6A"
-    url = "https://api.mapbox.com/styles/v1/natevatt/{}/tiles/{}/{}/{}/{}{}?access_token={}".format(styleId, pixels, zoom, x, y, retina, apiToken)
+    style_id = "cj49edx972r632rp904oj4acj"
+    api_token = config.api_token
+    url = "https://api.mapbox.com/styles/v1/natevatt/{}/tiles/{}/{}/{}/{}{}?access_token={}".format(style_id, pixels, zoom, x, y, retina, api_token)
     print(url)
     r = requests.get(url, stream=True)
     if r.status_code == 200:
@@ -25,17 +28,17 @@ def save_tile(zoom, x, y):
 def put_tiles_together(y, numRows):
     hori_list = []
     for i in range(numRows):
-        yValue = y + i
+        y_value = y + i
         imgs = []
-        for file in glob.glob("*_{}.png".format(yValue)):
+        for file in glob.glob("*_{}.png".format(y_value)):
             print(file)
             imgs.append(Image.open(file))
         imgs = np.hstack( (imgs) )
         hori_list.append(imgs)
 
-    vStack = np.vstack(hori_list)
-    vStack = Image.fromarray( vStack )
-    vStack.save( 'mapGrid_real.png' )
+    v_stack = np.vstack(hori_list)
+    v_stack = Image.fromarray( v_stack )
+    v_stack.save( 'mapGrid_real.png' )
 
 def make_map(x1, x2, y1, y2, zoom):
     os.chdir("images")
@@ -52,13 +55,14 @@ def tile_from_lat_lon(lat, lon, zoom):
     pixels = gmt.MetersToPixels(meters[0], meters[1], zoom)
     # print(pixels)
     tiles = gmt.PixelsToTile(pixels[0], pixels[1])
-    googleTiles = gmt.GoogleTile(tiles[0], tiles[1], zoom)
-    print(googleTiles)
-    return googleTiles
+    google_tiles = gmt.GoogleTile(tiles[0], tiles[1], zoom)
+    print(google_tiles)
+    return google_tiles
 
-zoom = 14
-topLeft = tile_from_lat_lon(36.985003092, -122.0581054, zoom)
-bottomRight = tile_from_lat_lon(36.949891786, -121.9702148, zoom)
+def run_vt_map_print():
+    zoom = 14
+    top_left = tile_from_lat_lon(36.985003092, -122.0581054, zoom)
+    bottom_right = tile_from_lat_lon(36.949891786, -121.9702148, zoom)
 
-print(topLeft[0], bottomRight[0], topLeft[1], bottomRight[1], zoom)
-make_map(topLeft[0], bottomRight[0], topLeft[1], bottomRight[1], zoom)
+    print(top_left[0], bottom_right[0], top_left[1], bottom_right[1], zoom)
+    make_map(top_left[0], bottom_right[0], top_left[1], bottom_right[1], zoom)
