@@ -59,7 +59,7 @@ def tile_from_lat_lon(lat, lon, zoom):
     print(google_tiles)
     return google_tiles
 
-def run_vt_map_print(zoom, tl_lat, tl_lon, br_lat, br_lon):
+def run_vt_map_print(zoom, tl_lat, tl_lon, br_lat, br_lon, api_token):
     # zoom = 14
     # top_left = tile_from_lat_lon(36.985003092, -122.0581054, zoom)
     # bottom_right = tile_from_lat_lon(36.949891786, -121.9702148, zoom)

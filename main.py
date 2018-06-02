@@ -9,6 +9,7 @@ if __name__ == '__main__':
     parser.add_argument("top_left_lon", help="the longitudinal position of the top left point in your bbox", type=float)
     parser.add_argument("bottom_right_lat", help="the latitudinal position of the bottom right point in your bbox", type=float)
     parser.add_argument("bottom_right_lon", help="the longitudinal position of the bottom right point in your bbox", type=float)
+    group.add_argument("-a", "--api_token", help="overirde the config api_token with another Mapbox API Token")
     args = parser.parse_args()
     # print("the mapbox api token is {}".format(args.zoom))
     # print(type(args.zoom))

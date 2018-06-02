@@ -4,6 +4,7 @@ This project uses the Mapbox Static API to export vector tile map styles as larg
 ## Installation
 - Download or clone this repo
 - Run `pip install -r requirements.txt`
+- Create a `config.py` file similar to `config_example.py`
 
 ## Command Line Arguments
 ### Required
