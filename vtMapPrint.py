@@ -6,7 +6,7 @@ from PIL import Image
 from globalMapTiles3 import GlobalMercator
 gmt = GlobalMercator()
 
-def saveTile(zoom, x, y):
+def save_tile(zoom, x, y):
     pixels = 256
     retina = '@2x'
     styleId = "cj49edx972r632rp904oj4acj"
@@ -22,7 +22,7 @@ def saveTile(zoom, x, y):
             rgb_im = im.convert('RGB')
             rgb_im.save('{}_{}_{}.png'.format(zoom, x, y))
 
-def putTilesTogether(y, numRows):
+def put_tiles_together(y, numRows):
     hori_list = []
     for i in range(numRows):
         yValue = y + i
@@ -37,16 +37,16 @@ def putTilesTogether(y, numRows):
     vStack = Image.fromarray( vStack )
     vStack.save( 'mapGrid_real.png' )
 
-def makeMap(x1, x2, y1, y2, zoom):
+def make_map(x1, x2, y1, y2, zoom):
     os.chdir("images")
     for x in range(x1, x2):
         for y in range(y1, y2):
-            saveTile(zoom, x, y)
+            save_tile(zoom, x, y)
             print("({}, {})".format(x, y))
     print(y1, y2-y1)
-    putTilesTogether(y1, y2-y1)
+    put_tiles_together(y1, y2-y1)
 
-def tileFromLatLon(lat, lon, zoom):
+def tile_from_lat_lon(lat, lon, zoom):
     meters = gmt.LatLonToMeters(lat, lon)
     # print(meters)
     pixels = gmt.MetersToPixels(meters[0], meters[1], zoom)
@@ -57,8 +57,8 @@ def tileFromLatLon(lat, lon, zoom):
     return googleTiles
 
 zoom = 14
-topLeft = tileFromLatLon(36.985003092, -122.0581054, zoom)
-bottomRight = tileFromLatLon(36.949891786, -121.9702148, zoom)
+topLeft = tile_from_lat_lon(36.985003092, -122.0581054, zoom)
+bottomRight = tile_from_lat_lon(36.949891786, -121.9702148, zoom)
 
 print(topLeft[0], bottomRight[0], topLeft[1], bottomRight[1], zoom)
-makeMap(topLeft[0], bottomRight[0], topLeft[1], bottomRight[1], zoom)
+make_map(topLeft[0], bottomRight[0], topLeft[1], bottomRight[1], zoom)
