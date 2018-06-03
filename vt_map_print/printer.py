@@ -7,10 +7,10 @@ from PIL import Image
 from vt_map_print.third_party import globalMapTiles3
 from vt_map_print import config
 
-class VT_Map_Print:
+class VT_Map_Print():
 
     def __init__(self):
-        gmt = globalMapTiles3.GlobalMercator()
+        self.gmt = globalMapTiles3.GlobalMercator()
 
 
     def save_tile(self, zoom, x, y):
@@ -67,7 +67,7 @@ class VT_Map_Print:
         return google_tiles
 
 
-    def run_vt_map_print(self, zoom, tl_lat, tl_lon, br_lat, br_lon, api_token):
+    def run_vt_map_print(self, zoom, tl_lat, tl_lon, br_lat, br_lon, api_token = None):
         # zoom = 14
         # top_left = tile_from_lat_lon(36.985003092, -122.0581054, zoom)
         # bottom_right = tile_from_lat_lon(36.949891786, -121.9702148, zoom)
