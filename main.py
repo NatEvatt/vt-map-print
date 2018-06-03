@@ -1,5 +1,6 @@
 import argparse
-from vt_map_print import vt_map_print
+from vt_map_print import VT_Map_Print
+# from vt_map_print import vt_map_print
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -13,4 +14,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     # print("the mapbox api token is {}".format(args.zoom))
     # print(type(args.zoom))
-    vt_map_print.run_vt_map_print(args.zoom, args.top_left_lat, args.top_left_lon, args.bottom_right_lat, args.bottom_right_lon)
+    VT_Map_Print.run_vt_map_print(args.zoom, args.top_left_lat, args.top_left_lon, args.bottom_right_lat, args.bottom_right_lon)
