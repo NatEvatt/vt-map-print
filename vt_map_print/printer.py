@@ -18,7 +18,8 @@ class VT_Map_Print():
         retina = '@2x'
         style_id = "cj49edx972r632rp904oj4acj"
         api_token = config.api_token
-        url = "https://api.mapbox.com/styles/v1/natevatt/{}/tiles/{}/{}/{}/{}{}?access_token={}".format(style_id, pixels, zoom, x, y, retina, api_token)
+        mapbox_url = config.mapbox_url
+        url = "{}/tiles/{}/{}/{}/{}{}?access_token={}".format(mapbox_url, style_id, pixels, zoom, x, y, retina, api_token)
         print(url)
         r = requests.get(url, stream=True)
         if r.status_code == 200:
