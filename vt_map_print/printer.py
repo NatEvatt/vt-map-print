@@ -4,6 +4,7 @@ import glob, os
 import numpy as np
 from PIL import Image
 import argparse
+# ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 from vt_map_print.third_party import globalMapTiles3
 from vt_map_print import config
@@ -15,18 +16,23 @@ class VT_Map_Print():
 
 
     def save_tile(self, x, y):
-        mapbox_url = config.mapbox_url
-        url = "{}/tiles/{}/{}/{}/{}{}?access_token={}".format(self.mapbox_url, self.style_id, self.pixels,
+        url = "{}/{}/tiles/{}/{}/{}/{}{}?access_token={}".format(self.mapbox_url, self.style_id, self.pixels,
                                                             self.zoom, x, y, self.retina, self.api_token)
         print(url)
         r = requests.get(url, stream=True)
         if r.status_code == 200:
             with open('{}_{}_{}.png'.format(self.zoom, x, y), 'wb') as out_file:
+                print("1")
                 r.raw.decode_content = True
+                print("2")
                 shutil.copyfileobj(r.raw, out_file)
+                print("3")
                 im = Image.open('{}_{}_{}.png'.format(self.zoom, x, y))
+                print("4")
                 rgb_im = im.convert('RGB')
+                print("5")
                 rgb_im.save('{}_{}_{}.png'.format(self.zoom, x, y))
+                print("6")
 
 
     def put_tiles_together(self, y, numRows):
