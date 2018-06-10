@@ -89,10 +89,11 @@ class VT_Map_Print():
         parser.add_argument("bottom_right_lon", help="the longitudinal position of the bottom right point in your bbox", type=float)
         parser.add_argument("-a", "--api_token", help="override the config api_token with another Mapbox API Token")
         parser.add_argument("-p", "--pixels", help="number of pixels in tile - accepts '256' or '512'")
-        parser.add_argument("-r", "--retina", help="accepts '2' or '1' default is 1")
+        parser.add_argument("-r", "--retina", help="accepts 'Y' or 'N' default is N")
         parser.add_argument("-s", "--style_id", help="specify the Mabox Style ID default is streets")
         parser.add_argument("-u", "--mapbox_url", help="override the config mapbox_url with another Mapbox url")
         return parser.parse_args()
+
 
     def define_arguments(self):
         self.zoom = self.parsed.zoom
@@ -104,8 +105,7 @@ class VT_Map_Print():
         ## optional
         self.api_token = self.parsed.api_token if self.parsed.api_token else config.api_token
         self.pixels = self.parsed.pixels if self.parsed.pixels else 256
-        self.retina = "@2x" if self.parsed.retina else ""
-        # self.retina = "@2x" if self.parsed.retina == 2 else ""
+        self.retina = "@2x" if self.parsed.retina == "Y" else ""
         self.style_id = self.parsed.style_id if self.parsed.style_id else "cj49edx972r632rp904oj4acj" #change to streets
         self.mapbox_url = self.parsed.mapbox_url if self.parsed.mapbox_url else config.mapbox_url
         print("{} and the args is {}".format(self.retina, self.parsed.retina))
