@@ -2,9 +2,10 @@ import requests
 import shutil
 import glob, os
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFile
 import argparse
-# ImageFile.LOAD_TRUNCATED_IMAGES = True
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+from pprint import pprint
 
 from vt_map_print.third_party import globalMapTiles3
 from vt_map_print import config
@@ -18,25 +19,21 @@ class VT_Map_Print():
     def save_tile(self, x, y):
         url = "{}/{}/tiles/{}/{}/{}/{}{}?access_token={}".format(self.mapbox_url, self.style_id, self.pixels,
                                                             self.zoom, x, y, self.retina, self.api_token)
+
         print(url)
         r = requests.get(url, stream=True)
         if r.status_code == 200:
             with open('{}_{}_{}.png'.format(self.zoom, x, y), 'wb') as out_file:
-                print("1")
                 r.raw.decode_content = True
-                print("2")
                 shutil.copyfileobj(r.raw, out_file)
-                print("3")
                 im = Image.open('{}_{}_{}.png'.format(self.zoom, x, y))
-                print("4")
-                rgb_im = im.convert('RGB')
-                print("5")
+                rgb_im = im.convert('RGBA')
                 rgb_im.save('{}_{}_{}.png'.format(self.zoom, x, y))
-                print("6")
 
 
     def put_tiles_together(self, y, numRows):
         hori_list = []
+        print(" the y and num rows are {} and {}".format(y, numRows))
         for i in range(numRows):
             y_value = y + i
             imgs = []
@@ -94,7 +91,7 @@ class VT_Map_Print():
         parser.add_argument("bottom_right_lon", help="the longitudinal position of the bottom right point in your bbox", type=float)
         parser.add_argument("-a", "--api_token", help="override the config api_token with another Mapbox API Token")
         parser.add_argument("-p", "--pixels", help="number of pixels in tile - accepts '256' or '512'")
-        parser.add_argument("-r", "--retina", help="accepts '2' or '1' default is 2")
+        parser.add_argument("-r", "--retina", help="accepts '2' or '1' default is 1")
         parser.add_argument("-s", "--style_id", help="specify the Mabox Style ID default is streets")
         parser.add_argument("-u", "--mapbox_url", help="override the config mapbox_url with another Mapbox url")
         return parser.parse_args()
@@ -109,6 +106,8 @@ class VT_Map_Print():
         ## optional
         self.api_token = self.parsed.api_token if self.parsed.api_token else config.api_token
         self.pixels = self.parsed.pixels if self.parsed.pixels else 256
-        self.retina = self.parsed.retina if self.parsed.retina else "@2x"
+        self.retina = "@2x" if self.parsed.retina else ""
+        # self.retina = "@2x" if self.parsed.retina == 2 else ""
         self.style_id = self.parsed.style_id if self.parsed.style_id else "cj49edx972r632rp904oj4acj" #change to streets
         self.mapbox_url = self.parsed.mapbox_url if self.parsed.mapbox_url else config.mapbox_url
+        print("{} and the args is {}".format(self.retina, self.parsed.retina))
