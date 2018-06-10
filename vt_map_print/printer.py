@@ -19,13 +19,11 @@ class VT_Map_Print():
     def save_tile(self, x, y):
         url = "{}/{}/tiles/{}/{}/{}/{}{}?access_token={}".format(self.mapbox_url, self.style_id, self.pixels,
                                                             self.zoom, x, y, self.retina, self.api_token)
-
         print(url)
         r = requests.get(url, stream=True)
         if r.status_code == 200:
             with open('{}_{}_{}.png'.format(self.zoom, x, y), 'wb') as out_file:
-                r.raw.decode_content = True
-                shutil.copyfileobj(r.raw, out_file)
+                out_file.write(r.content)
                 im = Image.open('{}_{}_{}.png'.format(self.zoom, x, y))
                 rgb_im = im.convert('RGBA')
                 rgb_im.save('{}_{}_{}.png'.format(self.zoom, x, y))
