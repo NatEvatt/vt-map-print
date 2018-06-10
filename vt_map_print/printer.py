@@ -1,11 +1,9 @@
 import requests
-import shutil
 import glob, os
 import numpy as np
 from PIL import Image, ImageFile
 import argparse
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-from pprint import pprint
 
 from vt_map_print.third_party import globalMapTiles3
 from vt_map_print import config
@@ -14,6 +12,20 @@ class VT_Map_Print():
 
     def __init__(self):
         self.gmt = globalMapTiles3.GlobalMercator()
+
+
+    def run_vt_map_print(self, args):
+        self.parsed = self.parse_args(args)
+        self.define_arguments()
+        tile_count = self.tile_count(self.zoom, self.tl_lat, self.tl_lon, self.br_lat, self.br_lon)
+        print("the tile count is {}".format(tile_count))
+        if tile_count > 100:
+            print("Your request is too large.  It will return {} many tiles.  Plese choose a smaller zoom level".format(tile_count))
+            return
+        top_left = self.tile_from_lat_lon(self.tl_lat, self.tl_lon, self.zoom)
+        bottom_right = self.tile_from_lat_lon(self.br_lat, self.br_lon, self.zoom)
+        print(top_left[0], bottom_right[0], top_left[1], bottom_right[1], self.parsed.zoom)
+        self.make_map(top_left[0], bottom_right[0], top_left[1], bottom_right[1], self.zoom, self.api_token)
 
 
     def save_tile(self, x, y):
@@ -56,27 +68,13 @@ class VT_Map_Print():
         self.put_tiles_together(y1, y2-y1)
 
 
-    def tile_from_lat_lon(self, lat, lon):
+    def tile_from_lat_lon(self, lat, lon, zoom):
         meters = self.gmt.LatLonToMeters(lat, lon)
-        # print(meters)
-        pixels = self.gmt.MetersToPixels(meters[0], meters[1], self.zoom)
-        # print(pixels)
+        pixels = self.gmt.MetersToPixels(meters[0], meters[1], zoom)
         tiles = self.gmt.PixelsToTile(pixels[0], pixels[1])
-        google_tiles = self.gmt.GoogleTile(tiles[0], tiles[1], self.zoom)
+        google_tiles = self.gmt.GoogleTile(tiles[0], tiles[1], zoom)
         print(google_tiles)
         return google_tiles
-
-
-    # def run_vt_map_print(self, zoom, tl_lat, tl_lon, br_lat, br_lon, api_token):
-    def run_vt_map_print(self, args):
-        self.parsed = self.parse_args(args)
-        self.define_arguments()
-        # top_left = self.tile_from_lat_lon(self.parsed.top_left_lat, self.parsed.top_left_lon, self.parsed.zoom)
-        # bottom_right = self.tile_from_lat_lon(self.parsed.bottom_right_lat, self.parsed.bottom_right_lon, self.parsed.zoom)
-        top_left = self.tile_from_lat_lon(self.tl_lat, self.tl_lon)
-        bottom_right = self.tile_from_lat_lon(self.br_lat, self.br_lon)
-        print(top_left[0], bottom_right[0], top_left[1], bottom_right[1], self.parsed.zoom)
-        self.make_map(top_left[0], bottom_right[0], top_left[1], bottom_right[1], self.zoom, self.api_token)
 
 
     def parse_args(self, args):
@@ -109,3 +107,11 @@ class VT_Map_Print():
         self.style_id = self.parsed.style_id if self.parsed.style_id else "cj49edx972r632rp904oj4acj" #change to streets
         self.mapbox_url = self.parsed.mapbox_url if self.parsed.mapbox_url else config.mapbox_url
         print("{} and the args is {}".format(self.retina, self.parsed.retina))
+
+
+    def tile_count(self, zoom, tl_lat, tl_lon, br_lat, br_lon):
+        top_left = self.tile_from_lat_lon(tl_lat, tl_lon, zoom)
+        bottom_right = self.tile_from_lat_lon(br_lat, br_lon, zoom)
+        x = bottom_right[0] - top_left[0]
+        y = bottom_right[1] - top_left[1]
+        return x * y
