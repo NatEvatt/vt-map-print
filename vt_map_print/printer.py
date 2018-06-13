@@ -36,14 +36,19 @@ class VT_Map_Print():
         if r.status_code == 200:
             with open('{}_{}_{}.png'.format(self.zoom, x, y), 'wb') as out_file:
                 out_file.write(r.content)
-                im = Image.open('{}_{}_{}.png'.format(self.zoom, x, y))
-                rgb_im = im.convert('RGBA')
-                rgb_im.save('{}_{}_{}.png'.format(self.zoom, x, y))
+                try:
+                    im = Image.open('{}_{}_{}.png'.format(self.zoom, x, y))
+                    rgb_im = im.convert('RGBA')
+                    rgb_im.save('{}_{}_{}.png'.format(self.zoom, x, y))
+                except:
+                    out_file.close()
+                    im = Image.open('{}_{}_{}.png'.format(self.zoom, x, y))
+                    rgb_im = im.convert('RGBA')
+                    rgb_im.save('{}_{}_{}.png'.format(self.zoom, x, y))
 
 
     def put_tiles_together(self, y, numRows):
         hori_list = []
-        print(" the y and num rows are {} and {}".format(y, numRows))
         for i in range(numRows):
             y_value = y + i
             imgs = []
@@ -115,3 +120,8 @@ class VT_Map_Print():
         x = bottom_right[0] - top_left[0]
         y = bottom_right[1] - top_left[1]
         return x * y
+
+
+    #@TODO
+    def pixel_count(self):
+        pass
