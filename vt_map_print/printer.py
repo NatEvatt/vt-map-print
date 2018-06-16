@@ -17,13 +17,16 @@ class VT_Map_Print():
     def run_vt_map_print(self, args):
         self.parsed = self.parse_args(args)
         self.define_arguments()
-        tile_count = self.tile_count(self.zoom, self.tl_lat, self.tl_lon, self.br_lat, self.br_lon)
-        print("the tile count is {}".format(tile_count))
-        if tile_count > 100:
-            print("Your request is too large.  It will return {} many tiles.  Plese choose a smaller zoom level".format(tile_count))
-            return
         top_left = self.tile_from_lat_lon(self.tl_lat, self.tl_lon, self.zoom)
         bottom_right = self.tile_from_lat_lon(self.br_lat, self.br_lon, self.zoom)
+        tile_count = self.tile_count(top_left, bottom_right)
+        pixel_count = self.pixel_count(top_left, bottom_right, self.retina, self.pixels)
+        print("the tile count is {}".format(tile_count))
+        if (tile_count[0] * tile_count[1] > 100):
+            print("Your request is too large.  It will return {} many tiles.  Plese choose a smaller zoom level".format(tile_count))
+            return
+        # top_left = self.tile_from_lat_lon(self.tl_lat, self.tl_lon, self.zoom)
+        # bottom_right = self.tile_from_lat_lon(self.br_lat, self.br_lon, self.zoom)
         print(top_left[0], bottom_right[0], top_left[1], bottom_right[1], self.parsed.zoom)
         self.make_map(top_left[0], bottom_right[0], top_left[1], bottom_right[1], self.zoom, self.api_token)
 
@@ -114,14 +117,14 @@ class VT_Map_Print():
         print("{} and the args is {}".format(self.retina, self.parsed.retina))
 
 
-    def tile_count(self, zoom, tl_lat, tl_lon, br_lat, br_lon):
-        top_left = self.tile_from_lat_lon(tl_lat, tl_lon, zoom)
-        bottom_right = self.tile_from_lat_lon(br_lat, br_lon, zoom)
-        x = bottom_right[0] - top_left[0]
-        y = bottom_right[1] - top_left[1]
-        return x * y
+    def tile_count(self, bottom_right, top_left):
+        x =  top_left[0] - bottom_right[0]
+        y =  top_left[1] - bottom_right[1]
+        return (x, y)
 
 
-    #@TODO
-    def pixel_count(self):
-        pass
+    def pixel_count(self, tile_count, retina, pixels):
+        retina_value = 2 if retina == "@2x" else 1
+        pixel_x = tile_count[0] * retina_value * pixels
+        pixel_y = tile_count[1] * retina_value * pixels
+        return (pixel_x, pixel_y)
