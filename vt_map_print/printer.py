@@ -20,7 +20,9 @@ class VT_Map_Print():
         top_left = self.tile_from_lat_lon(self.tl_lat, self.tl_lon, self.zoom)
         bottom_right = self.tile_from_lat_lon(self.br_lat, self.br_lon, self.zoom)
         tile_count = self.tile_count(top_left, bottom_right)
-        pixel_count = self.pixel_count(top_left, bottom_right, self.retina, self.pixels)
+        print("the stuff is {}, {}, {}, {}".format(top_left, bottom_right, self.retina, self.pixels))
+        pixel_count = self.pixel_count(tile_count, self.retina, self.pixels)
+
         print("the tile count is {}".format(tile_count))
         if (tile_count[0] * tile_count[1] > 100):
             print("Your request is too large.  It will return {} many tiles.  Plese choose a smaller zoom level".format(tile_count))
@@ -88,7 +90,7 @@ class VT_Map_Print():
     def parse_args(self, args):
         parser = argparse.ArgumentParser()
         # parser.add_argument("--api_token", help="your mapbox api token")
-        parser.add_argument("zoom", help="your mapbox api token", type=int)
+        parser.add_argument("zoom", help="the zoom level between 0 and 22", type=int)
         parser.add_argument("top_left_lat", help="the latitudinal position of the top left point in your bbox", type=float)
         parser.add_argument("top_left_lon", help="the longitudinal position of the top left point in your bbox", type=float)
         parser.add_argument("bottom_right_lat", help="the latitudinal position of the bottom right point in your bbox", type=float)
@@ -111,7 +113,7 @@ class VT_Map_Print():
         ## optional
         self.api_token = self.parsed.api_token if self.parsed.api_token else config.api_token
         self.pixels = self.parsed.pixels if self.parsed.pixels else 256
-        self.retina = "@2x" if self.parsed.retina == "Y" else ""
+        self.retina = "@2x" if self.parsed.retina == "Y" else "N"
         self.style_id = self.parsed.style_id if self.parsed.style_id else "cj49edx972r632rp904oj4acj" #change to streets
         self.mapbox_url = self.parsed.mapbox_url if self.parsed.mapbox_url else config.mapbox_url
         print("{} and the args is {}".format(self.retina, self.parsed.retina))
