@@ -14,17 +14,25 @@ class VT_Map_Print():
         self.gmt = globalMapTiles3.GlobalMercator()
 
 
-    def run_vt_map_print(self, args):
-        print(args)
+        #@TODO clean the duplicate code
+    def get_tile_info(self, args):
         self.parsed = self.parse_args(args)
         self.define_arguments()
         top_left = self.tile_from_lat_lon(self.tl_lat, self.tl_lon, self.zoom)
         bottom_right = self.tile_from_lat_lon(self.br_lat, self.br_lon, self.zoom)
         tile_count = self.tile_count(top_left, bottom_right)
-        print("the stuff is {}, {}, {}, {}".format(top_left, bottom_right, self.retina, self.pixels))
+        pixel_count = self.pixel_count(tile_count, self.retina, self.pixels)
+        return (tile_count, pixel_count)
+
+
+    def run_vt_map_print(self, args):
+        self.parsed = self.parse_args(args)
+        self.define_arguments()
+        top_left = self.tile_from_lat_lon(self.tl_lat, self.tl_lon, self.zoom)
+        bottom_right = self.tile_from_lat_lon(self.br_lat, self.br_lon, self.zoom)
+        tile_count = self.tile_count(top_left, bottom_right)
         pixel_count = self.pixel_count(tile_count, self.retina, self.pixels)
 
-        print("the tile count is {}".format(tile_count))
         if (tile_count[0] * tile_count[1] > 100):
             print("Your request is too large.  It will return {} many tiles.  Plese choose a smaller zoom level".format(tile_count))
             return
@@ -117,7 +125,6 @@ class VT_Map_Print():
         self.retina = "@2x" if self.parsed.retina == "Y" else ""
         self.style_id = self.parsed.style_id if self.parsed.style_id else "cj49edx972r632rp904oj4acj" #change to streets
         self.mapbox_url = self.parsed.mapbox_url if self.parsed.mapbox_url else config.mapbox_url
-        print("{} and the args is {}".format(self.retina, self.parsed.retina))
 
 
     def tile_count(self, bottom_right, top_left):
