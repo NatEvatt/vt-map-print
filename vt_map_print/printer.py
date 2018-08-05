@@ -15,6 +15,7 @@ class VT_Map_Print():
 
 
     def run_vt_map_print(self, args):
+        print(args)
         self.parsed = self.parse_args(args)
         self.define_arguments()
         top_left = self.tile_from_lat_lon(self.tl_lat, self.tl_lon, self.zoom)
@@ -100,7 +101,7 @@ class VT_Map_Print():
         parser.add_argument("-r", "--retina", help="accepts 'Y' or 'N' default is N")
         parser.add_argument("-s", "--style_id", help="specify the Mabox Style ID default is streets")
         parser.add_argument("-u", "--mapbox_url", help="override the config mapbox_url with another Mapbox url")
-        return parser.parse_args()
+        return parser.parse_args(args)
 
 
     def define_arguments(self):
