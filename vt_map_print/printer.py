@@ -113,7 +113,7 @@ class VT_Map_Print():
         ## optional
         self.api_token = self.parsed.api_token if self.parsed.api_token else config.api_token
         self.pixels = self.parsed.pixels if self.parsed.pixels else 256
-        self.retina = "@2x" if self.parsed.retina == "Y" else "N"
+        self.retina = "@2x" if self.parsed.retina == "Y" else ""
         self.style_id = self.parsed.style_id if self.parsed.style_id else "cj49edx972r632rp904oj4acj" #change to streets
         self.mapbox_url = self.parsed.mapbox_url if self.parsed.mapbox_url else config.mapbox_url
         print("{} and the args is {}".format(self.retina, self.parsed.retina))
