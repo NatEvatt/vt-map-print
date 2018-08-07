@@ -3,6 +3,7 @@ import glob, os
 import numpy as np
 from PIL import Image, ImageFile
 import argparse
+import json
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 from vt_map_print.third_party import globalMapTiles3
@@ -22,7 +23,7 @@ class VT_Map_Print():
         bottom_right = self.tile_from_lat_lon(self.br_lat, self.br_lon, self.zoom)
         tile_count = self.tile_count(top_left, bottom_right)
         pixel_count = self.pixel_count(tile_count, self.retina, self.pixels)
-        return (tile_count, pixel_count)
+        print(json.dumps({'tile_count': tile_count, 'pixel_count': pixel_count}))
 
 
     def run_vt_map_print(self, args):
@@ -92,14 +93,14 @@ class VT_Map_Print():
         pixels = self.gmt.MetersToPixels(meters[0], meters[1], zoom)
         tiles = self.gmt.PixelsToTile(pixels[0], pixels[1])
         google_tiles = self.gmt.GoogleTile(tiles[0], tiles[1], zoom)
-        print(google_tiles)
+        # print(google_tiles)
         return google_tiles
 
 
     def parse_args(self, args):
         parser = argparse.ArgumentParser()
         # parser.add_argument("--api_token", help="your mapbox api token")
-        parser.add_argument("zoom", help="the zoom level between 0 and 22", type=int)
+        parser.add_argument("zoom", help="the zoom level between 0 and 22", type=float)
         parser.add_argument("top_left_lat", help="the latitudinal position of the top left point in your bbox", type=float)
         parser.add_argument("top_left_lon", help="the longitudinal position of the top left point in your bbox", type=float)
         parser.add_argument("bottom_right_lat", help="the latitudinal position of the bottom right point in your bbox", type=float)
