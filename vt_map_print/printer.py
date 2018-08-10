@@ -80,6 +80,7 @@ class VT_Map_Print():
 
     def make_map(self, x1, x2, y1, y2, zoom, api_token):
         os.chdir("images")
+        # os.chdir("../storage/images")
         for x in range(x1, x2):
             for y in range(y1, y2):
                 self.save_tile(x, y)
@@ -114,7 +115,7 @@ class VT_Map_Print():
 
 
     def define_arguments(self):
-        self.zoom = self.parsed.zoom
+        self.zoom = int(self.parsed.zoom)
         self.tl_lat = self.parsed.top_left_lat
         self.tl_lon = self.parsed.top_left_lon
         self.br_lat = self.parsed.bottom_right_lat
