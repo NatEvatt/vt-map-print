@@ -62,14 +62,16 @@ class VT_Map_Print():
                     rgb_im.save('{}_{}_{}.png'.format(self.zoom, x, y))
 
 
-    def put_tiles_together(self, y, numRows):
+    def put_tiles_together(self, y, num_rows, x, num_columns, zoom):
         hori_list = []
-        for i in range(numRows):
-            y_value = y + i
+        for i in range(num_rows):
             imgs = []
-            for file in glob.glob("*_{}.png".format(y_value)):
-                print(file)
-                imgs.append(Image.open(file))
+            for j in range(num_columns):
+                y_value = y + i
+                x_value = x + j
+                file_name = "{}_{}_{}.png".format(zoom, x_value, y_value)
+                # print(file_name)
+                imgs.append(Image.open(file_name))
             imgs = np.hstack( (imgs) )
             hori_list.append(imgs)
 
@@ -85,8 +87,8 @@ class VT_Map_Print():
             for y in range(y1, y2):
                 self.save_tile(x, y)
                 print("({}, {})".format(x, y))
-        print(y1, y2-y1)
-        self.put_tiles_together(y1, y2-y1)
+        print(y1, y2-y1, x1, x2-x1)
+        self.put_tiles_together(y1, y2-y1, x1, x2-x1, zoom)
 
 
     def tile_from_lat_lon(self, lat, lon, zoom):
