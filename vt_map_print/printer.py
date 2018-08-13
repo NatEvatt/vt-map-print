@@ -52,14 +52,12 @@ class VT_Map_Print():
             with open('{}_{}_{}.png'.format(self.zoom, x, y), 'wb') as out_file:
                 out_file.write(r.content)
                 try:
+                    out_file.close() # having better luck with closing first
                     im = Image.open('{}_{}_{}.png'.format(self.zoom, x, y))
                     rgb_im = im.convert('RGBA')
                     rgb_im.save('{}_{}_{}.png'.format(self.zoom, x, y))
                 except:
-                    out_file.close()
-                    im = Image.open('{}_{}_{}.png'.format(self.zoom, x, y))
-                    rgb_im = im.convert('RGBA')
-                    rgb_im.save('{}_{}_{}.png'.format(self.zoom, x, y))
+                    print("There was an error processing the file {}_{}_{}.png".format(self.zoom, x, y))
 
 
     def put_tiles_together(self, y, num_rows, x, num_columns, zoom):
@@ -81,8 +79,8 @@ class VT_Map_Print():
 
 
     def make_map(self, x1, x2, y1, y2, zoom, api_token):
-        os.chdir("images")
-        # os.chdir("../storage/images")
+        # os.chdir("images")
+        os.chdir("../storage/images")
         for x in range(x1, x2):
             for y in range(y1, y2):
                 self.save_tile(x, y)
@@ -128,7 +126,7 @@ class VT_Map_Print():
         self.pixels = self.parsed.pixels if self.parsed.pixels else 256
         self.retina = "@2x" if self.parsed.retina == "Y" else ""
         self.style_id = self.parsed.style_id if self.parsed.style_id else "cj49edx972r632rp904oj4acj" #change to streets
-        self.mapbox_url = self.parsed.mapbox_url if self.parsed.mapbox_url else config.mapbox_url
+        self.mapbox_url = "https://api.mapbox.com/styles/v1/{}".format(self.parsed.mapbox_url) if self.parsed.mapbox_url else config.mapbox_url
 
 
     def tile_count(self, bottom_right, top_left):
